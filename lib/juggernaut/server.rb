@@ -253,9 +253,7 @@ module Juggernaut
           when :show_channels_for_client
             query_needs :client_id
             if client = Juggernaut::Client.find_by_id(@request[:client_id])
-              publish client.channels.to_json
-            else
-              publish nil.to_json
+              publish client.channels_to_json
             end
           when :show_clients
             if @request[:client_ids] and @request[:client_ids].any?
@@ -331,9 +329,11 @@ module Juggernaut
       end
 
       def authenticate_broadcast_or_query
+        logger.debug "Authenticate Broadcast Or Query"
         if options[:allowed_ips]
           return true if options[:allowed_ips].include?(client_ip)
-        elsif !@request[:secret_key]
+        end
+        if !@request[:secret_key]
           return true if broadcast_query_request
         elsif options[:secret_key]
           return true if @request[:secret_key] == options[:secret_key]

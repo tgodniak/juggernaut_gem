@@ -107,6 +107,13 @@ module Juggernaut
       }.to_json
     end
 
+    def channels_to_json
+      {
+        :client_id  => @id, 
+        :channels => channels
+      }.to_json
+    end
+
     def add_new_connection(subscriber)
       @connections << subscriber
     end
